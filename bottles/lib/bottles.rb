@@ -1,3 +1,5 @@
+require 'pry-byebug'
+
 class Bottles
   def song
     verses(99, 0)
@@ -8,49 +10,89 @@ class Bottles
   end
 
   def verse(number)
-    "#{quantity(number).capitalize} #{container(number)} of beer on the wall, " +
-    "#{quantity(number)} #{container(number)} of beer.\n" +
-    "#{action(number)}, " +
-    "#{quantity(successor(number))} #{container(successor(number))} of beer on the wall.\n"
+    bottle_number = BottleNumber.for(number)
+    "#{bottle_number} of beer on the wall, ".capitalize +
+    "#{bottle_number} of beer.\n" +
+    "#{bottle_number.action}, " +
+    "#{bottle_number.successor} of beer on the wall.\n"
   end
+end
 
-  def quantity(number)
-    if number == 0
-      "no more"
+class BottleNumber
+  attr_reader :number
+
+  def self.for(number)
+    case number
+    when 0
+      BottleNumber0
+    when 1
+      BottleNumber1
+    when 6
+      BottleNumber6
     else
-      number.to_s
+      BottleNumber
     end
+      .new(number)
   end
 
-  def container(number)
-    if number == 1
-      "bottle"
-     else
-      "bottles"
-     end
+  def initialize(number)
+    @number = number
   end
 
-  def action(number)
-    if number == 0
-      "Go to the store and buy some more"
-    else
-      "Take #{pronoun(number)} down and pass it around"
-    end
+  def to_s
+    "#{quantity} #{container}"
   end
 
-  def pronoun(number)
-    if number == 1
-      "it"
-    else
-      "one"
-    end
+  def quantity
+    number.to_s
   end
 
-  def successor(number)
-    if number == 0
-      99
-    else
-      number - 1
-    end
+  def container
+    "bottles"
+  end
+
+  def action
+    "Take one down and pass it around"
+  end
+
+  def successor
+    BottleNumber.for(number - 1)
+  end
+end
+
+# Replace conditionals with polymorphism (inheritance)
+# Replace conditionals with State/Strategy (composition) https://refactoring.guru/replace-type-code-with-state-strategy
+
+class BottleNumber0 < BottleNumber
+  def action
+    "Go to the store and buy some more"
+  end
+
+  def successor
+    BottleNumber.new(99)
+  end
+
+  def quantity
+    'no more'
+  end
+end
+
+class BottleNumber1 < BottleNumber
+  def action
+    "Take it down and pass it around"
+  end
+
+  def container
+    "bottle"
+  end
+end
+
+class BottleNumber6 < BottleNumber
+  def quantity
+    "1"
+  end
+
+  def container
+    "six-pack"
   end
 end
