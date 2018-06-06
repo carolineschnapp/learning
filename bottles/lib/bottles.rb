@@ -40,19 +40,11 @@ class BottleNumber
   end
 
   def to_s
-    "#{quantity} #{container}"
-  end
-
-  def quantity
-    number.to_s
-  end
-
-  def container
-    "bottles"
+    "#{number} bottles"
   end
 
   def action
-    "Take one down and pass it around"
+    'Take one down and pass it around'
   end
 
   def successor
@@ -65,34 +57,30 @@ end
 
 class BottleNumber0 < BottleNumber
   def action
-    "Go to the store and buy some more"
+    'Go to the store and buy some more'
   end
 
   def successor
     BottleNumber.new(99)
   end
 
-  def quantity
-    'no more'
+  def to_s
+    'no more bottles'
   end
 end
 
 class BottleNumber1 < BottleNumber
   def action
-    "Take it down and pass it around"
+    'Take it down and pass it around'
   end
 
-  def container
-    "bottle"
+  def to_s
+    '1 bottle'
   end
 end
 
 class BottleNumber6 < BottleNumber
-  def quantity
-    "1"
-  end
-
-  def container
-    "six-pack"
+  def to_s
+    '1 six-pack'
   end
 end
