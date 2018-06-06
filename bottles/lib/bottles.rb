@@ -9,17 +9,26 @@ class Bottles
 
   # #{quantity(number).to_s.capitalize} contains a hidden conditional: if a string already passes it, otherwise convert.
   def verse(number)
-    case number
-    when 0
-      <<~VERSE
-        #{quantity(number).capitalize} #{container(number)} of beer on the wall, #{quantity(number)} #{container(number)} of beer.
-        #{action(number)}, #{quantity(99)} #{container(99)} of beer on the wall.
-      VERSE
+    bottle_number = BottleNumber.new(number)
+    <<~VERSE
+      #{bottle_number.quantity.capitalize} #{bottle_number.container} of beer on the wall, #{bottle_number.quantity} #{bottle_number.container} of beer.
+      #{bottle_number.action}, #{bottle_number.successor.quantity} #{bottle_number.successor.container} of beer on the wall.
+    VERSE
+  end
+
+  # Liskov substitution: 'if you make make a promise, keep it' (loose definition). Super strict-specific meaning:
+  # If S is a subtype of T, then objects of type T may be replaced with objects of type S,
+  # (i.e. an object of type T may be substituted with any object of a subtype S)
+  # 'Principle of the least surprise' maybe?
+  # Don't chase the shiny thing: one step at a time, one code smell at a time.
+
+  def quantity(number)
+    # if number == -1 # don't like this
+    #   '99'
+    if number == 0
+      'no more'
     else
-      <<~VERSE
-        #{quantity(number).capitalize} #{container(number)} of beer on the wall, #{quantity(number)} #{container(number)} of beer.
-        #{action(number)}, #{quantity(number-1)} #{container(number-1)} of beer on the wall.
-      VERSE
+      number.to_s
     end
   end
 
@@ -30,19 +39,6 @@ class Bottles
       'bottle'
     else # infinity of numbers
       'bottles'
-    end
-  end
-
-  # Liskov substitution: 'if you make a promise, keep it'. Super strict-specific meaning:
-  # If S is a subtype of T, then objects of type T may be replaced with objects of type S.
-
-  def quantity(number)
-    # if number == -1 # don't like this
-    #   '99'
-    if number == 0
-      'no more'
-    else
-      number.to_s
     end
   end
 
@@ -70,3 +66,55 @@ class Bottles
     end
   end
 end
+
+# Move all methods that obsess over an argument to a class
+# that takes that aurgument as initializer, then the methods refer to it.
+class BottleNumber
+  def initialize(number)
+    @number = number
+  end
+
+  def quantity
+    if @number == 0
+      'no more'
+    else
+      @number.to_s
+    end
+  end
+
+  def container
+    if @number == 1
+      'bottle'
+    else # infinity of numbers
+      'bottles'
+    end
+  end
+
+  def pronoun
+    if @number == 1
+      'it'
+    else
+      'one'
+    end
+  end
+
+  def action
+    if @number == 0
+      'Go to the store and buy some more'
+    else
+      "Take #{pronoun} down and pass it around"
+    end
+  end
+
+  def successor
+    if @number == 0
+      self.class.new(99)
+    else
+      self.class.new(@number - 1)
+    end
+  end
+end
+
+# 1. Not cache things. Object creation is free.
+# 2. Make objects that are immutable.
+# 3. If things are slow, benchmark it, don't make a guess as to which part is slow, you will likely have it wrong.
