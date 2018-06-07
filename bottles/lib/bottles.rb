@@ -9,12 +9,16 @@ class Bottles
     upper.downto(lower).map { |i| verse(i) }.join("\n")
   end
 
+  # sub(pattern) {|match| block } → new_str
+  # returns a copy of str with the first occurrence of pattern replaced by the second argument.
+
   def verse(number)
     bottle_number = BottleNumber.for(number)
-    v = <<~VERSE
-      #{bottle_number.to_s.capitalize} of beer on the wall, #{bottle_number} of beer.
+    <<~VERSE
+      #{bottle_number} of beer on the wall, #{bottle_number} of beer.
       #{bottle_number.action}, #{bottle_number.successor} of beer on the wall.
     VERSE
+      .sub(/^./, &:upcase)
   end
 end
 
