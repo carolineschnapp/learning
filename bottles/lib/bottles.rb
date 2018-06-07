@@ -9,10 +9,17 @@ def BottleNumber(number)
   BottleNumber.for(number)
 end
 
+class DescendingVerseSong
+  attr_reader :verse_template, :upper, :lower
 
-class Bottles
+  def initialize(verse_template: BottleVerse, upper: 99, lower: 0)
+    @verse_template = verse_template
+    @upper = upper
+    @lower = lower
+  end
+
   def song
-    verses(99, 0)
+    verses(upper, lower)
   end
 
   def verses(upper, lower)
@@ -20,15 +27,28 @@ class Bottles
   end
 
   def verse(number)
-    bottle_number = BottleNumber.for(number)
+    verse_template.lyrics(number)
+  end
+end
 
+class BottleVerse
+  attr_reader :bottle_number
+
+  def initialize(bottle_number)
+    @bottle_number = bottle_number
+  end
+
+  def self.lyrics(number)
+    new(number.to_bottle_number).lyrics
+  end
+
+  def lyrics
     "#{bottle_number} of beer on the wall, ".capitalize +
     "#{bottle_number} of beer.\n" +
     "#{bottle_number.action}, " +
     "#{bottle_number.successor} of beer on the wall.\n"
   end
 end
-
 
 class BottleNumber
   def self.for(number)
@@ -43,6 +63,7 @@ class BottleNumber
   end
 
   attr_reader :number
+
   def initialize(number)
     @number = number
   end
