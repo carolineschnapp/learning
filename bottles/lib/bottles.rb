@@ -7,7 +7,7 @@
 
 require 'pry-byebug'
 
-class Bottles
+class Song
   attr_reader :verse_template
 
   def initialize(verse_template: BottleVerse)
@@ -21,9 +21,6 @@ class Bottles
   def verses(upper, lower)
     upper.downto(lower).map { |i| verse(i) }.join("\n")
   end
-
-  # sub(pattern) {|match| block } → new_str
-  # returns a copy of str with the first occurrence of pattern replaced by the second argument.
 
   def verse(number)
     verse_template.new(number).lyrics
