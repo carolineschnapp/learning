@@ -23,6 +23,7 @@ class Song
   end
 
   def verse(number)
+    verse_template.lyrics(number)
     verse_template.new(number).lyrics
   end
 end
@@ -34,6 +35,10 @@ class BottleVerse
     @number = number
   end
 
+  def self.lyrics(number)
+    new(number).lyrics
+  end
+
   def lyrics
     bottle_number = BottleNumber.for(number)
     <<~VERSE
@@ -41,6 +46,12 @@ class BottleVerse
       #{bottle_number.action}, #{bottle_number.successor} of beer on the wall.
     VERSE
       .sub(/^./, &:upcase)
+  end
+end
+
+class DoubleVerse
+  def self.lyrics(number)
+    "This is verse #{number}.\n"
   end
 end
 
