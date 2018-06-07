@@ -3,6 +3,7 @@
 # Open? Not quite. But we further isolated what needs to be changed.
 # Second code smell was 'conditionals'.
 # Replace conditional with polymorphism.
+# Edit one line of code at a time, then run tests, and they should be green.
 
 require 'pry-byebug'
 
@@ -31,23 +32,60 @@ end
 class BottleNumber
   attr_reader :number
 
-  def self.for(number)
-    case number
-    when 0
-      BottleNumber0
-    when 1
-      BottleNumber1
-    when 6
-      BottleNumber6
-    else
-      BottleNumber
+  class << self
+    def for(number)
+      registry.find { |candidate| candidate.handles?(number) }.new(number)
+
+      # Hashes have a default value that is returned when accessing keys that do not exist in the hash.
+      # Hash.new(BottleNumber).merge(
+      #   0 => BottleNumber0,
+      #   1 => BottleNumber1,
+      #   6 => BottleNumber6,
+      # )[number].new(number)
+
+      # begin
+      #   const_get("BottleNumber#{number}")
+      # rescue NameError
+      #   BottleNumber
+      # end
+      #   .new(number)
+
+      # return number is number.is_a?(BottleNumber)
+      # case number
+      # when 0
+      #   BottleNumber0
+      # when 1
+      #   BottleNumber1
+      # when 6
+      #   BottleNumber6
+      # else
+      #   BottleNumber
+      # end
+      #   .new(number)
     end
-      .new(number)
+
+    def handles?(number)
+      true
+    end
+
+    def registry
+      @@registry ||= [BottleNumber]
+    end
+
+    def register(candidate)
+      registry.unshift(candidate)
+    end
+
+    protected :new
   end
 
   def initialize(number)
     @number = number
   end
+
+  # def initialize(number)
+  #   @number = number
+  # end
 
   def to_s
     "#{number} bottles"
@@ -66,6 +104,12 @@ end
 # Replace conditionals with State/Strategy (composition) https://refactoring.guru/replace-type-code-with-state-strategy
 
 class BottleNumber0 < BottleNumber
+  register(self)
+
+  def self.handles?(number)
+    number == 0
+  end
+
   def to_s
     'no more bottles'
   end
@@ -75,11 +119,17 @@ class BottleNumber0 < BottleNumber
   end
 
   def successor
-    BottleNumber.new(99)
+    BottleNumber.for(99)
   end
 end
 
 class BottleNumber1 < BottleNumber
+  register(self)
+
+  def self.handles?(number)
+    number == 1
+  end
+
   def to_s
     '1 bottle'
   end
@@ -90,6 +140,12 @@ class BottleNumber1 < BottleNumber
 end
 
 class BottleNumber6 < BottleNumber
+  register(self)
+
+  def self.handles?(number)
+    number == 6
+  end
+
   def to_s
     '1 six-pack'
   end
