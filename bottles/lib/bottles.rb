@@ -8,6 +8,12 @@
 require 'pry-byebug'
 
 class Bottles
+  attr_reader :verse_template
+
+  def initialize(verse_template: BottleVerse)
+    @verse_template = verse_template
+  end
+
   def song
     verses(99, 0)
   end
@@ -20,7 +26,7 @@ class Bottles
   # returns a copy of str with the first occurrence of pattern replaced by the second argument.
 
   def verse(number)
-    BottleVerse.new(number).lyrics
+    verse_template.new(number).lyrics
   end
 end
 
