@@ -11,10 +11,10 @@ class Bottles
 
   def verse(number)
     bottle_number = BottleNumber.for(number)
-    "#{bottle_number} of beer on the wall, ".capitalize +
-    "#{bottle_number} of beer.\n" +
-    "#{bottle_number.action}, " +
-    "#{bottle_number.successor} of beer on the wall.\n"
+    v = <<~VERSE
+      #{bottle_number.to_s.capitalize} of beer on the wall, #{bottle_number} of beer.
+      #{bottle_number.action}, #{bottle_number.successor} of beer on the wall.
+    VERSE
   end
 end
 
@@ -56,6 +56,10 @@ end
 # Replace conditionals with State/Strategy (composition) https://refactoring.guru/replace-type-code-with-state-strategy
 
 class BottleNumber0 < BottleNumber
+  def to_s
+    'no more bottles'
+  end
+
   def action
     'Go to the store and buy some more'
   end
@@ -63,19 +67,15 @@ class BottleNumber0 < BottleNumber
   def successor
     BottleNumber.new(99)
   end
-
-  def to_s
-    'no more bottles'
-  end
 end
 
 class BottleNumber1 < BottleNumber
-  def action
-    'Take it down and pass it around'
-  end
-
   def to_s
     '1 bottle'
+  end
+
+  def action
+    'Take it down and pass it around'
   end
 end
 
