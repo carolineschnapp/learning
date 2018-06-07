@@ -20,6 +20,18 @@ class Bottles
   # returns a copy of str with the first occurrence of pattern replaced by the second argument.
 
   def verse(number)
+    BottleVerse.new(number).lyrics
+  end
+end
+
+class BottleVerse
+  attr_reader :number
+
+  def initialize(number)
+    @number = number
+  end
+
+  def lyrics
     bottle_number = BottleNumber.for(number)
     <<~VERSE
       #{bottle_number} of beer on the wall, #{bottle_number} of beer.
