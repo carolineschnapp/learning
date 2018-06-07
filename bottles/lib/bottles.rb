@@ -43,6 +43,8 @@ class BottleVerse
   end
 
   def lyrics
+    # bottle_number = BottleNumber(self.bottle_number)
+
     "#{bottle_number} of beer on the wall, ".capitalize +
     "#{bottle_number} of beer.\n" +
     "#{bottle_number.action}, " +
