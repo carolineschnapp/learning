@@ -1,3 +1,9 @@
+# Duplication code smell.
+# Remove duplication.
+# Open? Not quite. But we further isolated what needs to be changed.
+# Second code smell was 'conditionals'.
+# Replace conditional with polymorphism.
+
 require 'pry-byebug'
 
 class Bottles
