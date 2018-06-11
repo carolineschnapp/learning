@@ -1,38 +1,63 @@
+require 'pry'
+
 class House
-    def recite
-      1.upto(12).collect {|i| line(i)}.join("\n")
-    end
+  DATA = [
+    'the horse and the hound and the horn that belonged to',
+    'the farmer sowing his corn that kept',
+    'the rooster that crowed in the morn that woke',
+    'the priest all shaven and shorn that married',
+    'the man all tattered and torn that kissed',
+    'the maiden all forlorn that milked',
+    'the cow with the crumpled horn that tossed',
+    'the dog that worried',
+    'the cat that killed',
+    'the rat that ate',
+    'the malt that lay in',
+    'the house that Jack built',
+  ]
 
-    def fragment
-      "malt that lay in "
+  def recite
+    1.upto(12).map do |index|
+      line(index)
     end
-
-    def line(num)
-      case num
-      when 1
-        "This is the house that Jack built.\n"
-      when 2
-        "This is the #{fragment} the house that Jack built.\n"
-      when 3
-        "This is the rat that ate the malt that lay in the house that Jack built.\n"
-      when 4
-        "This is the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 5
-        "This is the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 6
-        "This is the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 7
-        "This is the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 8
-        "This is the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 9
-        "This is the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 10
-        "This is the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 11
-        "This is the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      when 12
-        "This is the horse and the hound and the horn that belonged to the farmer sowing his corn that kept the rooster that crowed in the morn that woke the priest all shaven and shorn that married the man all tattered and torn that kissed the maiden all forlorn that milked the cow with the crumpled horn that tossed the dog that worried the cat that killed the rat that ate the malt that lay in the house that Jack built.\n"
-      end
-    end
+      .join("\n")
   end
+
+  def phrase(num=1)
+    data.last(num).join(' ')
+  end
+
+  def line(num)
+    "#{prefix} #{phrase(num)}.\n"
+  end
+
+  def prefix
+    'This is'
+  end
+
+  def data
+    DATA
+  end
+end
+
+class RandomHouse < House
+  def data
+    @data ||= super.shuffle
+  end
+end
+
+puts RandomHouse.new.recite
+
+class RandomExceptLast < House
+  # Called with no arguments and no empty argument list,
+  # super calls the appropriate method with the same arguments, and the same code block,
+  # as those used to call the current method.
+  # Called with an argument list or arguments, it calls the appropriate methods
+  # with exactly the specified arguments (including none, in the case of an empty argument list
+  # indicated by empty parentheses).
+  def data
+    @data ||= super[0..-2].shuffle.push(super.last)
+  end
+end
+
+puts RandomExceptLast.new.recite
